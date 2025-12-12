@@ -2,13 +2,9 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Yeşeren Dergi</title>
+    <title>Yeşeren Dergi - Final</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
@@ -21,8 +17,8 @@
         }
 
         body {
-            /* Heyzine tarzı sahne ışığı */
-            background: radial-gradient(circle at center, #ffffff 0%, #e6e6e6 100%);
+            /* Heyzine tarzı aydınlık arka plan */
+            background: radial-gradient(circle at center, #ffffff 0%, #dcdcdc 100%);
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -36,93 +32,88 @@
         #flipbook {
             width: 800px;
             height: 560px;
-            /* Kitap gölgesi (Havada durma efekti) */
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); /* Güçlü dış gölge */
             transition: margin-left 0.5s;
-            margin-bottom: 25px; /* Çubukla mesafe */
+            margin-bottom: 30px;
         }
 
         #flipbook .page {
             background-color: white;
             cursor: pointer;
+            overflow: hidden; /* Taşmaları engelle */
         }
 
-        img { width: 100%; height: 100%; pointer-events: none; }
+        img { width: 100%; height: 100%; pointer-events: none; display: block; }
 
-        /* --- İŞTE SİHİRLİ DOKUNUŞ BURASI (ORTA CİLT GÖLGESİ) --- */
+        /* --- KİTAP ORTASI GÖLGESİ (SPINE SHADOW) - DÜZELTİLDİ --- */
         
-        /* Tüm sayfaların üzerine hayali bir katman (overlay) ekliyoruz */
+        /* Her sayfanın üzerine hayali bir katman (overlay) ekliyoruz */
         #flipbook .page::after {
             content: "";
             position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            z-index: 10; /* Resmin üzerinde durur */
-            pointer-events: none; /* Tıklamayı engellemez */
+            top: 0; bottom: 0;
+            width: 100%; /* Tüm sayfayı kaplasın ama gradient ile ayarlanacak */
+            z-index: 100; /* RESMİN ÜZERİNE ÇIKAR (En Önemli Kısım) */
+            pointer-events: none; /* Tıklamayı engellemesin */
         }
 
-        /* SOL SAYFALAR (Çift Numaralar): Gölge SAĞ tarafta (Orta kısım) */
-        #flipbook .even::after {
-            /* Sağ kenara doğru koyulaşan degrade */
-            background: linear-gradient(to right, rgba(0,0,0,0) 92%, rgba(0,0,0,0.15) 100%);
-            border-right: 1px solid rgba(0,0,0,0.1); /* Cilt çizgisi */
+        /* SOL SAYFALAR (Çift Numaralar: 2, 4, 6...): Gölge SAĞ KENARDA olmalı */
+        /* Turn.js'de çift numaralı sayfalar (even) sol tarafta durur */
+        #flipbook .page.even::after {
+            /* Sağdan sola doğru koyulaşan siyah gradient */
+            background: linear-gradient(to left, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 15%);
+            border-right: 1px solid rgba(0,0,0,0.15); /* Cilt çizgisi */
         }
 
-        /* SAĞ SAYFALAR (Tek Numaralar): Gölge SOL tarafta (Orta kısım) */
-        #flipbook .odd::after {
-            /* Sol kenara doğru koyulaşan degrade */
-            background: linear-gradient(to left, rgba(0,0,0,0) 92%, rgba(0,0,0,0.15) 100%);
-            border-left: 1px solid rgba(0,0,0,0.1); /* Cilt çizgisi */
+        /* SAĞ SAYFALAR (Tek Numaralar: 3, 5, 7...): Gölge SOL KENARDA olmalı */
+        /* Turn.js'de tek numaralı sayfalar (odd) sağ tarafta durur */
+        #flipbook .page.odd::after {
+            /* Soldan sağa doğru koyulaşan siyah gradient */
+            background: linear-gradient(to right, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 15%);
+            border-left: 1px solid rgba(0,0,0,0.15); /* Cilt çizgisi */
         }
 
-        /* KAPAK İSTİSNASI (Kapakta cilt gölgesi olmasın istersen burayı açabilirsin) */
-        /* #flipbook .p1::after { background: none; border: none; } */
+        /* KAPAK (Sayfa 1): Gölge olmasın, tek duruyor */
+        #flipbook .p1::after { display: none; }
 
 
-        /* --- İLERLEME ÇUBUĞU TASARIMI --- */
+        /* İLERLEME ÇUBUĞU */
         .slider-container {
             width: 500px;
-            background: rgba(0,0,0,0.05); /* Çok hafif gri zemin */
-            padding: 10px 25px;
-            border-radius: 50px;
+            background: rgba(255,255,255,0.6);
+            padding: 10px 20px;
+            border-radius: 30px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px); /* Hafif buzlu cam efekti */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
         }
 
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
-            height: 5px;
-            background: #ccc;
+            height: 6px;
+            background: #bbb;
             border-radius: 5px;
             cursor: pointer;
-            outline: none;
         }
 
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
+            height: 20px;
+            width: 20px;
             border-radius: 50%;
-            background: #444;
-            margin-top: -6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            transition: background 0.2s;
+            background: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            margin-top: -7px;
+            transition: transform 0.1s;
         }
         
-        input[type=range]::-webkit-slider-thumb:hover {
-            background: #000; /* Üstüne gelince koyulaşsın */
-            transform: scale(1.2); /* Hafif büyüsün */
-        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        /* Mobil Uyum */
+        /* MOBİL UYUM */
         @media only screen and (max-width: 900px) {
-            #flipbook {
-                width: 90vw !important;
-                height: auto !important;
-                aspect-ratio: 1000/700;
-            }
+            #flipbook { width: 90vw !important; height: auto !important; aspect-ratio: 1000/700; }
             .slider-container { width: 90%; }
         }
     </style>
@@ -162,9 +153,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        
         var slider = $("#page-slider");
-
         var book = $("#flipbook").turn({
             width: 800,
             height: 560,
@@ -172,34 +161,25 @@
             display: 'double',
             acceleration: true,
             duration: 1000,
-            elevation: 50,
             gradients: true,
+            elevation: 50,
             when: {
-                turning: function(event, page, view) {
-                    slider.val(page);
-                },
-                turned: function(event, page, view) {
-                    slider.val(page); // Dönüş bitince de güncelle (Garanti olsun)
-                }
+                turning: function(event, page, view) { slider.val(page); },
+                turned: function(event, page, view) { slider.val(page); }
             }
         });
 
-        // Çubuk değişince kitap dönsün
         slider.on("input change", function() {
-            var newPage = $(this).val();
-            book.turn("page", newPage);
+            book.turn("page", $(this).val());
         });
 
-        // Klavye
         $(document).keydown(function(e){
             if (e.keyCode == 37) book.turn("previous");
             if (e.keyCode == 39) book.turn("next");
         });
 
-        // Tıklama
         $("#flipbook").bind("click", function(event) {
-            var offset = $(this).offset();
-            if ((event.pageX - offset.left) > $(this).width() / 2)
+            if ((event.pageX - $(this).offset().left) > $(this).width() / 2)
                 book.turn("next");
             else
                 book.turn("previous");
