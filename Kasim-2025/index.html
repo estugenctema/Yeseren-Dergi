@@ -2,35 +2,46 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Kulüp Dergisi</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeşeren Dergi</title>
     
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
-    
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+
     <style>
-        body{ 
-            overflow:hidden; 
-            background: #333; /* Arka planı koyu yaptım ki dergi parlasın */
-            margin:0; padding:0;
+        body {
+            background: #222; /* Koyu gri arka plan */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center; /* Sayfayı tam ortalar */
+            align-items: center;     /* Dikeyde de ortalar */
+            height: 100vh;           /* Tam ekran yüksekliği */
         }
-        #flipbook{ 
-            width:922px; 
-            height:600px; 
-            margin: 20px auto; 
+
+        #flipbook {
+            width: 1000px;  /* Kitabın AÇIK halinin genişliği */
+            height: 700px;  /* Kitabın yüksekliği */
         }
-        #flipbook .page{ 
-            background-color:white; 
-            background-size:100% 100%; 
+
+        #flipbook .page {
+            width: 500px;   /* Tek sayfa genişliği (Kitabın yarısı) */
+            height: 700px;
+            background-color: white;
+            background-size: 100% 100%;
         }
-        #flipbook .shadow{
-            box-shadow: 0 4px 10px #666;
+
+        /* Sayfaların kenarına gölge ekleyerek derinlik katalım */
+        #flipbook .shadow {
+            box-shadow: 0 4px 10px #000;
         }
     </style>
 </head>
 <body>
 
 <div id="flipbook">
+    <div class="page" style="background-image:url('1.jpg')"></div>
+    
         <div class="page" style="background-image:url('1.jpg')"></div>
         <div class="page" style="background-image:url('2.jpg')"></div>
         <div class="page" style="background-image:url('3.jpg')"></div>
@@ -55,14 +66,17 @@
         <div class="page" style="background-image:url('22.jpg')"></div>
         <div class="page" style="background-image:url('23.jpg')"></div>
         <div class="page" style="background-image:url('24.jpg')"></div>
-</div>
+    
+    </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
         $("#flipbook").turn({
-            width: 922,
-            height: 600,
-            autoCenter: true
+            width: 1000,     // Kitabın toplam genişliği
+            height: 700,     // Yüksekliği
+            autoCenter: true,// Sayfayı hep ortada tutar
+            gradients: true, // Gölge efekti verir (Gerçekçilik için)
+            acceleration: true // Daha akıcı mouse hareketi sağlar
         });
     });
 </script>
