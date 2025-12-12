@@ -27,21 +27,20 @@
             font-family: sans-serif;
         }
 
-        /* --- KİTAP ÇERÇEVESİ (DARALTILDI) --- */
+        /* --- KİTAP ÇERÇEVESİ --- */
         #flipbook {
-            /* ESKİSİ: 1100px idi */
-            /* YENİSİ: 960px (Daha zarif ve derli toplu) */
             width: 960px;
-            
-            /* Yükseklik aynı kaldı (Senin beğendiğin boyut) */
             height: 770px;
             
-            /* Taşma koruması */
+            /* Taşma Koruması */
             max-height: 90vh; 
             max-width: 95vw;
             
             margin-bottom: 25px;
-            transition: margin-left 0.5s;
+            
+            /* GEÇİŞ EFEKTİ (Animasyonun yumuşak olması için) */
+            /* Hem margin hem transform değişirse yumuşak geçiş yapsın */
+            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), margin-left 0.5s;
         }
 
         #flipbook .page {
@@ -50,7 +49,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Kapak gölgesi */
+        /* Kapak gölgeleri */
         #flipbook .page.p1, #flipbook .page.p24 {
             box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
@@ -69,7 +68,7 @@
 
         /* --- İLERLEME ÇUBUĞU --- */
         .slider-container {
-            width: 500px; /* Kitap daralınca bunu da biraz kıstım */
+            width: 500px;
             height: 40px;
             background: rgba(255,255,255,0.7);
             border-radius: 30px;
@@ -80,6 +79,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             backdrop-filter: blur(5px);
             z-index: 1000;
+            transition: transform 0.6s; /* Çubuk da kitapla beraber kaysın mı? Sabit kalsın dersen bunu sil */
         }
 
         input[type=range] {
@@ -93,12 +93,12 @@
         }
         input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        /* --- MOBİL UYUM --- */
+        /* MOBİL UYUM */
         @media only screen and (max-width: 1100px) {
             #flipbook {
                 width: 90vw !important;
                 height: auto !important;
-                aspect-ratio: 960/770; /* Yeni orana göre küçül */
+                aspect-ratio: 960/770;
             }
             .slider-container { width: 80%; }
         }
@@ -140,11 +140,11 @@
 <script type="text/javascript">
     $(document).ready(function() {
         var slider = $("#page-slider");
+        var book = $("#flipbook");
         
-        var book = $("#flipbook").turn({
-            width: 960,   // DARALTILDI
-            height: 770,  // AYNI KALDI
-            
+        book.turn({
+            width: 960,
+            height: 770,
             autoCenter: true,
             display: 'double',
             acceleration: true,
@@ -152,10 +152,30 @@
             gradients: true,
             elevation: 50,
             when: {
-                turning: function(event, page, view) { slider.val(page); },
-                turned: function(event, page, view) { slider.val(page); }
+                // Sayfa çevrilmeye başladığında
+                turning: function(event, page, view) { 
+                    slider.val(page);
+                    updateBookPosition(page); // POZİSYONU GÜNCELLE
+                },
+                // Sayfa çevrilmesi bittiğinde (Garanti olsun)
+                turned: function(event, page, view) { 
+                    slider.val(page);
+                    updateBookPosition(page); 
+                }
             }
         });
+
+        // POZİSYON AYARLAMA FONKSİYONU
+        function updateBookPosition(page) {
+            // Eğer Kapak (1) veya Arka Kapak (24) ise -> ORTALA (0px)
+            if (page == 1 || page == 24) {
+                book.css("transform", "translateX(0px)");
+            } 
+            // Eğer iç sayfalarsa -> SAĞA KAYDIR (100px)
+            else {
+                book.css("transform", "translateX(100px)"); 
+            }
+        }
 
         slider.on("input change", function() {
             book.turn("page", $(this).val());
