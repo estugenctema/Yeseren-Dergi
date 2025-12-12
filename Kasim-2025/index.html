@@ -1,8 +1,10 @@
-﻿<!doctype html>
-<html>
+<!doctype html>
+<html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Yeşeren Dergi - Sayı 1</title>
+    <title>Yeşeren Dergi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -11,124 +13,122 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
+        /* TÜM SAYFADA SEÇİMİ VE SÜRÜKLEMEYİ ENGELLE (Mavi ekran sorunu çözümü) */
+        * {
+            -webkit-user-select: none; /* Chrome/Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* IE/Edge */
+            user-select: none;         /* Standart */
+            -webkit-user-drag: none;   /* Resim sürüklemeyi engelle */
+            user-drag: none;
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
         body {
-            background: #2d2d2d; /* Koyu gri arka plan */
-            margin: 0;
-            padding: 0;
+            background-color: #ffffff; /* ARKA PLAN BEYAZ YAPILDI */
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-            font-family: sans-serif;
+            overflow: hidden; /* Taşan kısımları gizle */
         }
 
         #flipbook {
             width: 1000px;
             height: 700px;
+            /* Dergiye derinlik katan hafif bir gölge */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
-            #flipbook .page {
-                background-color: white;
-                background-size: 100% 100%;
-                cursor: pointer; /* Tıklanabilir olduğunu gösterir */
-            }
+        #flipbook .page {
+            background-color: white;
+            cursor: pointer; /* Mouse el işareti olsun */
+        }
 
-        /* Resimlerin sürüklenmesini engelle (Tıklama bozulmasın diye) */
         img {
             width: 100%;
             height: 100%;
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            user-drag: none;
-            pointer-events: none; /* Tıklamayı engelle, tıklama olayını üstteki div alsın */
+            pointer-events: none; /* Tıklamalar resme değil, sayfaya gitsin */
         }
 
-        /* Bilgilendirme yazısı */
-        .info {
-            position: absolute;
-            bottom: 20px;
-            color: #888;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-            pointer-events: none;
+        /* Mobil uyumluluk için küçük bir ayar */
+        @media only screen and (max-width: 1050px) {
+            #flipbook {
+                width: 90vw !important; /* Ekranın %90'ı kadar küçül */
+                height: auto !important;
+                aspect-ratio: 1000 / 700; /* Oranı koru */
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="flipbook">
-        <div class="page"><img src="1.jpg"></div>
-        <div class="page"><img src="2.jpg"></div>
-        <div class="page"><img src="3.jpg"></div>
-        <div class="page"><img src="4.jpg"></div>
-        <div class="page"><img src="5.jpg"></div>
-        <div class="page"><img src="6.jpg"></div>
-        <div class="page"><img src="7.jpg"></div>
-        <div class="page"><img src="8.jpg"></div>
-        <div class="page"><img src="9.jpg"></div>
-        <div class="page"><img src="10.jpg"></div>
-        <div class="page"><img src="11.jpg"></div>
-        <div class="page"><img src="12.jpg"></div>
-        <div class="page"><img src="13.jpg"></div>
-        <div class="page"><img src="14.jpg"></div>
-        <div class="page"><img src="15.jpg"></div>
-        <div class="page"><img src="16.jpg"></div>
-        <div class="page"><img src="17.jpg"></div>
-        <div class="page"><img src="18.jpg"></div>
-        <div class="page"><img src="19.jpg"></div>
-        <div class="page"><img src="20.jpg"></div>
-        <div class="page"><img src="21.jpg"></div>
-        <div class="page"><img src="22.jpg"></div>
-        <div class="page"><img src="23.jpg"></div>
-        <div class="page"><img src="24.jpg"></div>
-    </div>
+<div id="flipbook">
+    <div class="page"><img src="1.jpg"></div>
+    <div class="page"><img src="2.jpg"></div>
+    <div class="page"><img src="3.jpg"></div>
+    <div class="page"><img src="4.jpg"></div>
+    <div class="page"><img src="5.jpg"></div>
+    <div class="page"><img src="6.jpg"></div>
+    <div class="page"><img src="7.jpg"></div>
+    <div class="page"><img src="8.jpg"></div>
+    <div class="page"><img src="9.jpg"></div>
+    <div class="page"><img src="10.jpg"></div>
+    <div class="page"><img src="11.jpg"></div>
+    <div class="page"><img src="12.jpg"></div>
+    <div class="page"><img src="13.jpg"></div>
+    <div class="page"><img src="14.jpg"></div>
+    <div class="page"><img src="15.jpg"></div>
+    <div class="page"><img src="16.jpg"></div>
+    <div class="page"><img src="17.jpg"></div>
+    <div class="page"><img src="18.jpg"></div>
+    <div class="page"><img src="19.jpg"></div>
+    <div class="page"><img src="20.jpg"></div>
+    <div class="page"><img src="21.jpg"></div>
+    <div class="page"><img src="22.jpg"></div>
+    <div class="page"><img src="23.jpg"></div>
+    <div class="page"><img src="24.jpg"></div>
+</div>
 
-    <div class="info">Sağa tıkla: İleri ❯ | Sola tıkla: ❮ Geri</div>
-
-    <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function() {
-
-        // 1. KİTABI BAŞLAT
+        
+        // Kitabı Başlat
         var book = $("#flipbook").turn({
             width: 1000,
             height: 700,
             autoCenter: true,
-            display: 'double', // Çift sayfa modu
+            display: 'double',
             acceleration: true,
-            duration: 1000, // Çevrilme süresi
-            elevation: 50
+            duration: 800, // Çevirme hızı (biraz hızlandırdım)
+            elevation: 50,
+            gradients: true // Gerçekçi gölge efekti
         });
 
-        // 2. KLAVYE KONTROLÜ (Sağ/Sol Ok Tuşları)
+        // KLAVYE KONTROLÜ
         $(document).keydown(function(e){
-            if (e.keyCode == 37) // Sol Ok
-                book.turn("previous");
-            else if (e.keyCode == 39) // Sağ Ok
-                book.turn("next");
+            if (e.keyCode == 37) book.turn("previous");
+            if (e.keyCode == 39) book.turn("next");
         });
 
-        // 3. AKILLI TIKLAMA SİSTEMİ (Mouse ile)
+        // TIKLAMA İLE ÇEVİRME (Sağ/Sol Yarı)
         $("#flipbook").bind("click", function(event) {
-            // Tıkladığın yerin koordinatını al
             var offset = $(this).offset();
             var relativeX = event.pageX - offset.left;
             var width = $(this).width();
-
-            // Eğer sağ yarıya tıkladıysan İLERİ
             if (relativeX > width / 2) {
                 book.turn("next");
-            }
-            // Eğer sol yarıya tıkladıysan GERİ
-            else {
+            } else {
                 book.turn("previous");
             }
         });
+
+        // Pencere boyutu değişirse dergiyi yeniden ortala
+        $(window).resize(function() {
+            $('#flipbook').turn('center');
+        });
     });
-    </script>
+</script>
 
 </body>
 </html>
