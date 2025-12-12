@@ -2,13 +2,14 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Yeşeren Dergi - Ciltli</title>
+    <title>Yeşeren Dergi - Final</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
+        /* TEMEL AYARLAR */
         * {
             -webkit-user-select: none; user-select: none;
             -webkit-user-drag: none; user-drag: none;
@@ -16,59 +17,59 @@
         }
 
         body {
-            /* Heyzine tarzı arka plan */
-            background: radial-gradient(circle at center, #ffffff 0%, #e0e0e0 100%);
+            /* Heyzine tarzı aydınlık arka plan */
+            background: radial-gradient(circle at center, #ffffff 0%, #dcdcdc 100%);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            /* YATAY ORTALAMAYI (justify-content) KAPATTIM. */
+            /* Çünkü bunu Turn.js'in "autoCenter" özelliği yapacak. */
+            justify-content: center; 
+            align-items: center; /* Dikey ortalama kalsın */
             overflow: hidden;
             font-family: sans-serif;
         }
 
+        /* KİTAP ÇERÇEVESİ */
         #flipbook {
-            width: 800px;
+            width: 800px;  /* AÇIK HALİNİN GENİŞLİĞİ */
             height: 560px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            transition: margin-left 0.5s;
+            /* BURADAKİ GÖLGEYİ KALDIRDIM. ARTIK SAYFALARDA OLACAK */
+            /* background: none; */
             margin-bottom: 30px;
+            transition: margin-left 0.5s; /* Kayma efekti için geçiş */
         }
 
         #flipbook .page {
             background-color: white;
             cursor: pointer;
-            position: relative; /* İçindeki gölge buna göre konumlanır */
+            /* GÖLGE ARTIK HER SAYFANIN KENDİSİNDE */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
         }
 
-        img { width: 100%; height: 100%; display: block; }
+        /* Kapak resmi tek başına dururken daha belirgin olsun */
+        #flipbook .page.p1, #flipbook .page.p24 {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
 
-        /* --- KESİN ÇÖZÜM: MANUEL GÖLGE KATMANI --- */
+        img { width: 100%; height: 100%; pointer-events: none; display: block; }
+
+
+        /* --- ORTA CİLT GÖLGESİ (GERÇEKÇİLİK İÇİN) --- */
         .shadow-overlay {
-            position: absolute;
-            top: 0; bottom: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 999; /* Resmin ÜZERİNE çıkmaya zorla */
-            pointer-events: none; /* Tıklamayı engelleme */
+            position: absolute; top: 0; bottom: 0; width: 100%; height: 100%;
+            z-index: 999; pointer-events: none;
         }
-
-        /* Çift Sayfalar (Sol Taraf) -> Gölge SAĞDA olmalı */
+        /* Çift Sayfalar (Sol) -> Gölge Sağda */
         .even .shadow-overlay {
-            /* Sağ kenara doğru koyulaşan degrade */
             background: linear-gradient(to right, rgba(0,0,0,0) 85%, rgba(0,0,0,0.2) 100%);
-            border-right: 1px solid rgba(0,0,0,0.15); /* Cilt çizgisi */
         }
-
-        /* Tek Sayfalar (Sağ Taraf) -> Gölge SOLDA olmalı */
+        /* Tek Sayfalar (Sağ) -> Gölge Solda */
         .odd .shadow-overlay {
-            /* Sol kenara doğru koyulaşan degrade */
             background: linear-gradient(to left, rgba(0,0,0,0) 85%, rgba(0,0,0,0.2) 100%);
-            border-left: 1px solid rgba(0,0,0,0.15); /* Cilt çizgisi */
         }
-
-        /* Kapak (Sayfa 1) gölgesiz olsun */
-        .p1 .shadow-overlay { display: none !important; }
+        /* Kapakta orta gölge olmasın */
+        .p1 .shadow-overlay, .p24 .shadow-overlay { display: none !important; }
 
 
         /* İLERLEME ÇUBUĞU */
@@ -81,6 +82,7 @@
             justify-content: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             backdrop-filter: blur(5px);
+            z-index: 1000; /* Her zaman en üstte */
         }
 
         input[type=range] {
@@ -91,9 +93,11 @@
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 20px; width: 20px;
             border-radius: 50%; background: #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3); margin-top: -7px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); margin-top: -7px; transition: transform 0.1s;
         }
-        
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* MOBİL UYUM */
         @media only screen and (max-width: 900px) {
             #flipbook { width: 90vw !important; height: auto !important; aspect-ratio: 1000/700; }
             .slider-container { width: 90%; }
@@ -104,41 +108,29 @@
 
     <div id="flipbook">
         <div class="page p1"><img src="1.jpg"><div class="shadow-overlay"></div></div>
-        
-        <div class="page even"><img src="2.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="3.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="4.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="5.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="6.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="7.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="8.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="9.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="10.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="11.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="12.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="13.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="14.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="15.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="16.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="17.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="18.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="19.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="20.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="21.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="22.jpg"><div class="shadow-overlay"></div></div>
-        <div class="page odd"><img src="23.jpg"><div class="shadow-overlay"></div></div>
-
-        <div class="page even"><img src="24.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p2 even"><img src="2.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p3 odd"><img src="3.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p4 even"><img src="4.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p5 odd"><img src="5.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p6 even"><img src="6.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p7 odd"><img src="7.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p8 even"><img src="8.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p9 odd"><img src="9.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p10 even"><img src="10.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p11 odd"><img src="11.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p12 even"><img src="12.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p13 odd"><img src="13.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p14 even"><img src="14.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p15 odd"><img src="15.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p16 even"><img src="16.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p17 odd"><img src="17.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p18 even"><img src="18.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p19 odd"><img src="19.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p20 even"><img src="20.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p21 odd"><img src="21.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p22 even"><img src="22.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p23 odd"><img src="23.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page p24"><img src="24.jpg"><div class="shadow-overlay"></div></div>
     </div>
 
     <div class="slider-container">
@@ -148,10 +140,15 @@
 <script type="text/javascript">
     $(document).ready(function() {
         var slider = $("#page-slider");
+        
         var book = $("#flipbook").turn({
-            width: 800,
+            width: 800,  // Açık halinin genişliği
             height: 560,
-            autoCenter: true,
+            
+            // --- İŞTE SİHİR BURADA ---
+            autoCenter: true, // Bu özellik kapağı ortalar, açılınca yana kaydırır.
+            // -------------------------
+            
             display: 'double',
             acceleration: true,
             duration: 1000,
@@ -172,13 +169,17 @@
             if (e.keyCode == 39) book.turn("next");
         });
 
+        // Tıklama ile çevirme (Sağ/Sol ayrımı)
         $("#flipbook").bind("click", function(event) {
+            // Sürükleme yapılıyorsa tıklamayı iptal et (Turn.js kendi halleder)
+            // Sadece direkt tıklamalarda çalışır
             if ((event.pageX - $(this).offset().left) > $(this).width() / 2)
                 book.turn("next");
             else
                 book.turn("previous");
         });
 
+        // Ekran boyutu değişince tekrar hesapla
         $(window).resize(function() { $('#flipbook').turn('center'); });
     });
 </script>
