@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Yeşeren Dergi - Final</title>
+    <title>Yeşeren Dergi - Büyük Boy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -22,74 +22,69 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            /* YATAY ORTALAMAYI (justify-content) KAPATTIM. */
-            /* Çünkü bunu Turn.js'in "autoCenter" özelliği yapacak. */
-            justify-content: center; 
-            align-items: center; /* Dikey ortalama kalsın */
-            overflow: hidden;
+            justify-content: center; /* Dikeyde ortala */
+            align-items: center;     /* Yatayda ortala */
+            overflow: hidden;        /* Kaydırma çubuklarını gizle */
             font-family: sans-serif;
         }
 
-        /* KİTAP ÇERÇEVESİ */
+        /* --- KİTAP ÇERÇEVESİ (BÜYÜTÜLDÜ) --- */
         #flipbook {
-            width: 800px;  /* AÇIK HALİNİN GENİŞLİĞİ */
-            height: 560px;
-            /* BURADAKİ GÖLGEYİ KALDIRDIM. ARTIK SAYFALARDA OLACAK */
-            /* background: none; */
-            margin-bottom: 30px;
-            transition: margin-left 0.5s; /* Kayma efekti için geçiş */
+            /* ESKİSİ: 800x560 idi */
+            /* YENİSİ: 1100x770 (Çok daha büyük ve okunaklı) */
+            width: 1100px;
+            height: 770px;
+            
+            /* Kitabın ekran yüksekliğinden taşmaması için güvenlik kilidi: */
+            max-height: 85vh; 
+            max-width: 150vh; /* En boy oranını korumak için */
+            
+            margin-bottom: 20px; /* Çubukla mesafe */
+            transition: margin-left 0.5s; /* Kayma efekti */
         }
 
         #flipbook .page {
             background-color: white;
             cursor: pointer;
-            /* GÖLGE ARTIK HER SAYFANIN KENDİSİNDE */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Sayfalara hafif gölge */
         }
 
-        /* Kapak resmi tek başına dururken daha belirgin olsun */
+        /* Kapak resmi tek başına dururken daha belirgin gölge */
         #flipbook .page.p1, #flipbook .page.p24 {
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
         img { width: 100%; height: 100%; pointer-events: none; display: block; }
 
-
-        /* --- ORTA CİLT GÖLGESİ (GERÇEKÇİLİK İÇİN) --- */
+        /* --- CİLT GÖLGESİ (GERÇEKÇİLİK) --- */
         .shadow-overlay {
             position: absolute; top: 0; bottom: 0; width: 100%; height: 100%;
             z-index: 999; pointer-events: none;
         }
-        /* Çift Sayfalar (Sol) -> Gölge Sağda */
-        .even .shadow-overlay {
-            background: linear-gradient(to right, rgba(0,0,0,0) 85%, rgba(0,0,0,0.2) 100%);
-        }
-        /* Tek Sayfalar (Sağ) -> Gölge Solda */
-        .odd .shadow-overlay {
-            background: linear-gradient(to left, rgba(0,0,0,0) 85%, rgba(0,0,0,0.2) 100%);
-        }
-        /* Kapakta orta gölge olmasın */
+        .even .shadow-overlay { background: linear-gradient(to right, rgba(0,0,0,0) 90%, rgba(0,0,0,0.15) 100%); }
+        .odd .shadow-overlay { background: linear-gradient(to left, rgba(0,0,0,0) 90%, rgba(0,0,0,0.15) 100%); }
         .p1 .shadow-overlay, .p24 .shadow-overlay { display: none !important; }
 
 
-        /* İLERLEME ÇUBUĞU */
+        /* --- İLERLEME ÇUBUĞU --- */
         .slider-container {
-            width: 500px;
-            background: rgba(255,255,255,0.6);
-            padding: 10px 20px;
+            width: 600px; /* Çubuğu da biraz uzattım */
+            height: 40px;
+            background: rgba(255,255,255,0.7);
             border-radius: 30px;
             display: flex;
+            align-items: center;
             justify-content: center;
+            padding: 0 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             backdrop-filter: blur(5px);
-            z-index: 1000; /* Her zaman en üstte */
+            z-index: 1000;
         }
 
         input[type=range] {
             -webkit-appearance: none; width: 100%; height: 6px;
             background: #bbb; border-radius: 5px; cursor: pointer;
         }
-
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 20px; width: 20px;
             border-radius: 50%; background: #333;
@@ -97,10 +92,14 @@
         }
         input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        /* MOBİL UYUM */
-        @media only screen and (max-width: 900px) {
-            #flipbook { width: 90vw !important; height: auto !important; aspect-ratio: 1000/700; }
-            .slider-container { width: 90%; }
+        /* --- MOBİL ve KÜÇÜK EKRAN UYUMU --- */
+        @media only screen and (max-width: 1200px) {
+            #flipbook {
+                width: 90vw !important; /* Ekran darsa %90'ını kapla */
+                height: auto !important;
+                aspect-ratio: 1100/770; /* Oranı asla bozma */
+            }
+            .slider-container { width: 80%; }
         }
     </style>
 </head>
@@ -142,12 +141,10 @@
         var slider = $("#page-slider");
         
         var book = $("#flipbook").turn({
-            width: 800,  // Açık halinin genişliği
-            height: 560,
+            width: 1100,  // YENİ GENİŞLİK
+            height: 770,  // YENİ YÜKSEKLİK
             
-            // --- İŞTE SİHİR BURADA ---
-            autoCenter: true, // Bu özellik kapağı ortalar, açılınca yana kaydırır.
-            // -------------------------
+            autoCenter: true, // Kapağı ortala, açılınca yana kaydır
             
             display: 'double',
             acceleration: true,
@@ -160,26 +157,26 @@
             }
         });
 
+        // Slider değişince sayfa değişsin
         slider.on("input change", function() {
             book.turn("page", $(this).val());
         });
 
+        // Klavye kontrolü
         $(document).keydown(function(e){
             if (e.keyCode == 37) book.turn("previous");
             if (e.keyCode == 39) book.turn("next");
         });
 
-        // Tıklama ile çevirme (Sağ/Sol ayrımı)
+        // Tıklama ile çevirme
         $("#flipbook").bind("click", function(event) {
-            // Sürükleme yapılıyorsa tıklamayı iptal et (Turn.js kendi halleder)
-            // Sadece direkt tıklamalarda çalışır
             if ((event.pageX - $(this).offset().left) > $(this).width() / 2)
                 book.turn("next");
             else
                 book.turn("previous");
         });
 
-        // Ekran boyutu değişince tekrar hesapla
+        // Pencere boyutu değişirse yeniden ortala
         $(window).resize(function() { $('#flipbook').turn('center'); });
     });
 </script>
