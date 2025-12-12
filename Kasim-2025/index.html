@@ -13,50 +13,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
-        /* TÜM SAYFADA SEÇİMİ VE SÜRÜKLEMEYİ ENGELLE (Mavi ekran sorunu çözümü) */
+        /* 1. MAVİ SEÇİMİ VE SÜRÜKLEMEYİ KAPATMA (En Önemli Kısım) */
         * {
-            -webkit-user-select: none; /* Chrome/Safari */
-            -moz-user-select: none;    /* Firefox */
-            -ms-user-select: none;     /* IE/Edge */
-            user-select: none;         /* Standart */
-            -webkit-user-drag: none;   /* Resim sürüklemeyi engelle */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
             user-drag: none;
-            margin: 0; padding: 0; box-sizing: border-box;
+            outline: none;
+            margin: 0; padding: 0;
         }
 
+        /* 2. ARKA PLAN BEYAZ (Heyzine Tarzı) */
         body {
-            background-color: #ffffff; /* ARKA PLAN BEYAZ YAPILDI */
+            background-color: #fcfcfc; /* Gözü yormaması için kırık beyaz */
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Taşan kısımları gizle */
+            overflow: hidden;
         }
 
+        /* 3. KİTAP GÖLGESİ (Derinlik Katar) */
         #flipbook {
             width: 1000px;
             height: 700px;
-            /* Dergiye derinlik katan hafif bir gölge */
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            /* Kitap masada duruyormuş gibi gölge */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+            transition: margin-left 0.5s;
         }
 
         #flipbook .page {
             background-color: white;
-            cursor: pointer; /* Mouse el işareti olsun */
+            cursor: pointer; /* Mouse el işareti */
         }
 
         img {
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Tıklamalar resme değil, sayfaya gitsin */
+            pointer-events: none; /* Resme değil sayfaya tıklansın */
         }
-
-        /* Mobil uyumluluk için küçük bir ayar */
+        
+        /* Mobil Uyum */
         @media only screen and (max-width: 1050px) {
             #flipbook {
-                width: 90vw !important; /* Ekranın %90'ı kadar küçül */
+                width: 95vw !important;
                 height: auto !important;
-                aspect-ratio: 1000 / 700; /* Oranı koru */
+                aspect-ratio: 1000/700;
             }
         }
     </style>
@@ -93,37 +97,37 @@
 <script type="text/javascript">
     $(document).ready(function() {
         
-        // Kitabı Başlat
         var book = $("#flipbook").turn({
             width: 1000,
             height: 700,
             autoCenter: true,
             display: 'double',
             acceleration: true,
-            duration: 800, // Çevirme hızı (biraz hızlandırdım)
+            duration: 800,
             elevation: 50,
-            gradients: true // Gerçekçi gölge efekti
+            gradients: true // Sayfa kıvrılınca gölge oluşsun (Gerçekçilik)
         });
 
-        // KLAVYE KONTROLÜ
+        // KLAVYE (Sağ-Sol Ok)
         $(document).keydown(function(e){
             if (e.keyCode == 37) book.turn("previous");
             if (e.keyCode == 39) book.turn("next");
         });
 
-        // TIKLAMA İLE ÇEVİRME (Sağ/Sol Yarı)
+        // TIKLAMA (Ekranın sağına/soluna tıklayınca çevir)
         $("#flipbook").bind("click", function(event) {
             var offset = $(this).offset();
             var relativeX = event.pageX - offset.left;
             var width = $(this).width();
-            if (relativeX > width / 2) {
+            
+            // Ortadan ikiye böl, sağa tıklandıysa ileri, sola tıklandıysa geri
+            if (relativeX > width / 2)
                 book.turn("next");
-            } else {
+            else
                 book.turn("previous");
-            }
         });
 
-        // Pencere boyutu değişirse dergiyi yeniden ortala
+        // Pencere boyutu değişirse ortala
         $(window).resize(function() {
             $('#flipbook').turn('center');
         });
