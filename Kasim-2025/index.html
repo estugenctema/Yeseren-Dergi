@@ -3,37 +3,34 @@
 <head>
     <meta charset="utf-8">
     <title>Kulüp Dergisi</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    
     <style>
-        body {
-            overflow: hidden;
-            background: #f0f0f0;
+        body{ 
+            overflow:hidden; 
+            background: #333; /* Arka planı koyu yaptım ki dergi parlasın */
+            margin:0; padding:0;
         }
-
-        #flipbook {
-            width: 800px;
-            height: 600px;
-            margin: 50px auto;
+        #flipbook{ 
+            width:922px; 
+            height:600px; 
+            margin: 20px auto; 
         }
-
-            #flipbook .page {
-                background-color: white;
-                background-size: 100% 100%;
-                box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            }
-        /* Mobil uyumluluk için basit ayar */
-        @media only screen and (max-width: 600px) {
-            #flipbook {
-                width: 100% !important;
-                height: 400px !important;
-            }
+        #flipbook .page{ 
+            background-color:white; 
+            background-size:100% 100%; 
+        }
+        #flipbook .shadow{
+            box-shadow: 0 4px 10px #666;
         }
     </style>
 </head>
 <body>
 
-    <div id="flipbook">
+<div id="flipbook">
         <div class="page" style="background-image:url('1.jpg')"></div>
         <div class="page" style="background-image:url('2.jpg')"></div>
         <div class="page" style="background-image:url('3.jpg')"></div>
@@ -58,18 +55,17 @@
         <div class="page" style="background-image:url('22.jpg')"></div>
         <div class="page" style="background-image:url('23.jpg')"></div>
         <div class="page" style="background-image:url('24.jpg')"></div>
+</div>
 
-    </div>
-
-    <script type="text/javascript">
-        $(window).ready(function () {
-            $("#flipbook").turn({
-                width: 800,
-                height: 600,
-                autoCenter: true
-            });
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#flipbook").turn({
+            width: 922,
+            height: 600,
+            autoCenter: true
         });
-    </script>
+    });
+</script>
 
 </body>
 </html>
