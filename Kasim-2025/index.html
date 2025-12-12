@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Yeşeren Dergi - Büyük Boy</title>
+    <title>Yeşeren Dergi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -17,46 +17,47 @@
         }
 
         body {
-            /* Heyzine tarzı aydınlık arka plan */
             background: radial-gradient(circle at center, #ffffff 0%, #dcdcdc 100%);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Dikeyde ortala */
-            align-items: center;     /* Yatayda ortala */
-            overflow: hidden;        /* Kaydırma çubuklarını gizle */
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
             font-family: sans-serif;
         }
 
-        /* --- KİTAP ÇERÇEVESİ (BÜYÜTÜLDÜ) --- */
+        /* --- KİTAP ÇERÇEVESİ (DARALTILDI) --- */
         #flipbook {
-            /* ESKİSİ: 800x560 idi */
-            /* YENİSİ: 1100x770 (Çok daha büyük ve okunaklı) */
-            width: 1100px;
+            /* ESKİSİ: 1100px idi */
+            /* YENİSİ: 960px (Daha zarif ve derli toplu) */
+            width: 960px;
+            
+            /* Yükseklik aynı kaldı (Senin beğendiğin boyut) */
             height: 770px;
             
-            /* Kitabın ekran yüksekliğinden taşmaması için güvenlik kilidi: */
-            max-height: 85vh; 
-            max-width: 150vh; /* En boy oranını korumak için */
+            /* Taşma koruması */
+            max-height: 90vh; 
+            max-width: 95vw;
             
-            margin-bottom: 20px; /* Çubukla mesafe */
-            transition: margin-left 0.5s; /* Kayma efekti */
+            margin-bottom: 25px;
+            transition: margin-left 0.5s;
         }
 
         #flipbook .page {
             background-color: white;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Sayfalara hafif gölge */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Kapak resmi tek başına dururken daha belirgin gölge */
+        /* Kapak gölgesi */
         #flipbook .page.p1, #flipbook .page.p24 {
             box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
         img { width: 100%; height: 100%; pointer-events: none; display: block; }
 
-        /* --- CİLT GÖLGESİ (GERÇEKÇİLİK) --- */
+        /* --- CİLT GÖLGESİ --- */
         .shadow-overlay {
             position: absolute; top: 0; bottom: 0; width: 100%; height: 100%;
             z-index: 999; pointer-events: none;
@@ -68,7 +69,7 @@
 
         /* --- İLERLEME ÇUBUĞU --- */
         .slider-container {
-            width: 600px; /* Çubuğu da biraz uzattım */
+            width: 500px; /* Kitap daralınca bunu da biraz kıstım */
             height: 40px;
             background: rgba(255,255,255,0.7);
             border-radius: 30px;
@@ -92,12 +93,12 @@
         }
         input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        /* --- MOBİL ve KÜÇÜK EKRAN UYUMU --- */
-        @media only screen and (max-width: 1200px) {
+        /* --- MOBİL UYUM --- */
+        @media only screen and (max-width: 1100px) {
             #flipbook {
-                width: 90vw !important; /* Ekran darsa %90'ını kapla */
+                width: 90vw !important;
                 height: auto !important;
-                aspect-ratio: 1100/770; /* Oranı asla bozma */
+                aspect-ratio: 960/770; /* Yeni orana göre küçül */
             }
             .slider-container { width: 80%; }
         }
@@ -141,11 +142,10 @@
         var slider = $("#page-slider");
         
         var book = $("#flipbook").turn({
-            width: 1100,  // YENİ GENİŞLİK
-            height: 770,  // YENİ YÜKSEKLİK
+            width: 960,   // DARALTILDI
+            height: 770,  // AYNI KALDI
             
-            autoCenter: true, // Kapağı ortala, açılınca yana kaydır
-            
+            autoCenter: true,
             display: 'double',
             acceleration: true,
             duration: 1000,
@@ -157,18 +157,15 @@
             }
         });
 
-        // Slider değişince sayfa değişsin
         slider.on("input change", function() {
             book.turn("page", $(this).val());
         });
 
-        // Klavye kontrolü
         $(document).keydown(function(e){
             if (e.keyCode == 37) book.turn("previous");
             if (e.keyCode == 39) book.turn("next");
         });
 
-        // Tıklama ile çevirme
         $("#flipbook").bind("click", function(event) {
             if ((event.pageX - $(this).offset().left) > $(this).width() / 2)
                 book.turn("next");
@@ -176,7 +173,6 @@
                 book.turn("previous");
         });
 
-        // Pencere boyutu değişirse yeniden ortala
         $(window).resize(function() { $('#flipbook').turn('center'); });
     });
 </script>
