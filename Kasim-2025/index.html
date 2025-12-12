@@ -2,14 +2,13 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Yeşeren Dergi - Final</title>
+    <title>Yeşeren Dergi - Ciltli</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
-        /* TEMEL AYARLAR */
         * {
             -webkit-user-select: none; user-select: none;
             -webkit-user-drag: none; user-drag: none;
@@ -17,8 +16,8 @@
         }
 
         body {
-            /* Heyzine tarzı aydınlık arka plan */
-            background: radial-gradient(circle at center, #ffffff 0%, #dcdcdc 100%);
+            /* Heyzine tarzı arka plan */
+            background: radial-gradient(circle at center, #ffffff 0%, #e0e0e0 100%);
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -28,11 +27,10 @@
             font-family: sans-serif;
         }
 
-        /* KİTAP ÇERÇEVESİ */
         #flipbook {
             width: 800px;
             height: 560px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4); /* Güçlü dış gölge */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             transition: margin-left 0.5s;
             margin-bottom: 30px;
         }
@@ -40,41 +38,37 @@
         #flipbook .page {
             background-color: white;
             cursor: pointer;
-            overflow: hidden; /* Taşmaları engelle */
+            position: relative; /* İçindeki gölge buna göre konumlanır */
         }
 
-        img { width: 100%; height: 100%; pointer-events: none; display: block; }
+        img { width: 100%; height: 100%; display: block; }
 
-        /* --- KİTAP ORTASI GÖLGESİ (SPINE SHADOW) - DÜZELTİLDİ --- */
-        
-        /* Her sayfanın üzerine hayali bir katman (overlay) ekliyoruz */
-        #flipbook .page::after {
-            content: "";
+        /* --- KESİN ÇÖZÜM: MANUEL GÖLGE KATMANI --- */
+        .shadow-overlay {
             position: absolute;
             top: 0; bottom: 0;
-            width: 100%; /* Tüm sayfayı kaplasın ama gradient ile ayarlanacak */
-            z-index: 100; /* RESMİN ÜZERİNE ÇIKAR (En Önemli Kısım) */
-            pointer-events: none; /* Tıklamayı engellemesin */
+            width: 100%;
+            height: 100%;
+            z-index: 999; /* Resmin ÜZERİNE çıkmaya zorla */
+            pointer-events: none; /* Tıklamayı engelleme */
         }
 
-        /* SOL SAYFALAR (Çift Numaralar: 2, 4, 6...): Gölge SAĞ KENARDA olmalı */
-        /* Turn.js'de çift numaralı sayfalar (even) sol tarafta durur */
-        #flipbook .page.even::after {
-            /* Sağdan sola doğru koyulaşan siyah gradient */
-            background: linear-gradient(to left, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 15%);
+        /* Çift Sayfalar (Sol Taraf) -> Gölge SAĞDA olmalı */
+        .even .shadow-overlay {
+            /* Sağ kenara doğru koyulaşan degrade */
+            background: linear-gradient(to right, rgba(0,0,0,0) 85%, rgba(0,0,0,0.2) 100%);
             border-right: 1px solid rgba(0,0,0,0.15); /* Cilt çizgisi */
         }
 
-        /* SAĞ SAYFALAR (Tek Numaralar: 3, 5, 7...): Gölge SOL KENARDA olmalı */
-        /* Turn.js'de tek numaralı sayfalar (odd) sağ tarafta durur */
-        #flipbook .page.odd::after {
-            /* Soldan sağa doğru koyulaşan siyah gradient */
-            background: linear-gradient(to right, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 15%);
+        /* Tek Sayfalar (Sağ Taraf) -> Gölge SOLDA olmalı */
+        .odd .shadow-overlay {
+            /* Sol kenara doğru koyulaşan degrade */
+            background: linear-gradient(to left, rgba(0,0,0,0) 85%, rgba(0,0,0,0.2) 100%);
             border-left: 1px solid rgba(0,0,0,0.15); /* Cilt çizgisi */
         }
 
-        /* KAPAK (Sayfa 1): Gölge olmasın, tek duruyor */
-        #flipbook .p1::after { display: none; }
+        /* Kapak (Sayfa 1) gölgesiz olsun */
+        .p1 .shadow-overlay { display: none !important; }
 
 
         /* İLERLEME ÇUBUĞU */
@@ -90,28 +84,16 @@
         }
 
         input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #bbb;
-            border-radius: 5px;
-            cursor: pointer;
+            -webkit-appearance: none; width: 100%; height: 6px;
+            background: #bbb; border-radius: 5px; cursor: pointer;
         }
 
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background: #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            margin-top: -7px;
-            transition: transform 0.1s;
+            -webkit-appearance: none; height: 20px; width: 20px;
+            border-radius: 50%; background: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); margin-top: -7px;
         }
         
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-        /* MOBİL UYUM */
         @media only screen and (max-width: 900px) {
             #flipbook { width: 90vw !important; height: auto !important; aspect-ratio: 1000/700; }
             .slider-container { width: 90%; }
@@ -121,30 +103,42 @@
 <body>
 
     <div id="flipbook">
-        <div class="page"><img src="1.jpg"></div>
-        <div class="page"><img src="2.jpg"></div>
-        <div class="page"><img src="3.jpg"></div>
-        <div class="page"><img src="4.jpg"></div>
-        <div class="page"><img src="5.jpg"></div>
-        <div class="page"><img src="6.jpg"></div>
-        <div class="page"><img src="7.jpg"></div>
-        <div class="page"><img src="8.jpg"></div>
-        <div class="page"><img src="9.jpg"></div>
-        <div class="page"><img src="10.jpg"></div>
-        <div class="page"><img src="11.jpg"></div>
-        <div class="page"><img src="12.jpg"></div>
-        <div class="page"><img src="13.jpg"></div>
-        <div class="page"><img src="14.jpg"></div>
-        <div class="page"><img src="15.jpg"></div>
-        <div class="page"><img src="16.jpg"></div>
-        <div class="page"><img src="17.jpg"></div>
-        <div class="page"><img src="18.jpg"></div>
-        <div class="page"><img src="19.jpg"></div>
-        <div class="page"><img src="20.jpg"></div>
-        <div class="page"><img src="21.jpg"></div>
-        <div class="page"><img src="22.jpg"></div>
-        <div class="page"><img src="23.jpg"></div>
-        <div class="page"><img src="24.jpg"></div>
+        <div class="page p1"><img src="1.jpg"><div class="shadow-overlay"></div></div>
+        
+        <div class="page even"><img src="2.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="3.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="4.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="5.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="6.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="7.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="8.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="9.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="10.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="11.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="12.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="13.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="14.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="15.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="16.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="17.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="18.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="19.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="20.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="21.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="22.jpg"><div class="shadow-overlay"></div></div>
+        <div class="page odd"><img src="23.jpg"><div class="shadow-overlay"></div></div>
+
+        <div class="page even"><img src="24.jpg"><div class="shadow-overlay"></div></div>
     </div>
 
     <div class="slider-container">
