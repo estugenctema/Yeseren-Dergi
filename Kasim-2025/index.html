@@ -1,0 +1,134 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Yeşeren Dergi - Sayı 1</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+
+    <style>
+        body {
+            background: #2d2d2d; /* Koyu gri arka plan */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        #flipbook {
+            width: 1000px;
+            height: 700px;
+        }
+
+            #flipbook .page {
+                background-color: white;
+                background-size: 100% 100%;
+                cursor: pointer; /* Tıklanabilir olduğunu gösterir */
+            }
+
+        /* Resimlerin sürüklenmesini engelle (Tıklama bozulmasın diye) */
+        img {
+            width: 100%;
+            height: 100%;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            pointer-events: none; /* Tıklamayı engelle, tıklama olayını üstteki div alsın */
+        }
+
+        /* Bilgilendirme yazısı */
+        .info {
+            position: absolute;
+            bottom: 20px;
+            color: #888;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="flipbook">
+        <div class="page"><img src="1.jpg"></div>
+        <div class="page"><img src="2.jpg"></div>
+        <div class="page"><img src="3.jpg"></div>
+        <div class="page"><img src="4.jpg"></div>
+        <div class="page"><img src="5.jpg"></div>
+        <div class="page"><img src="6.jpg"></div>
+        <div class="page"><img src="7.jpg"></div>
+        <div class="page"><img src="8.jpg"></div>
+        <div class="page"><img src="9.jpg"></div>
+        <div class="page"><img src="10.jpg"></div>
+        <div class="page"><img src="11.jpg"></div>
+        <div class="page"><img src="12.jpg"></div>
+        <div class="page"><img src="13.jpg"></div>
+        <div class="page"><img src="14.jpg"></div>
+        <div class="page"><img src="15.jpg"></div>
+        <div class="page"><img src="16.jpg"></div>
+        <div class="page"><img src="17.jpg"></div>
+        <div class="page"><img src="18.jpg"></div>
+        <div class="page"><img src="19.jpg"></div>
+        <div class="page"><img src="20.jpg"></div>
+        <div class="page"><img src="21.jpg"></div>
+        <div class="page"><img src="22.jpg"></div>
+        <div class="page"><img src="23.jpg"></div>
+        <div class="page"><img src="24.jpg"></div>
+    </div>
+
+    <div class="info">Sağa tıkla: İleri ❯ | Sola tıkla: ❮ Geri</div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+
+        // 1. KİTABI BAŞLAT
+        var book = $("#flipbook").turn({
+            width: 1000,
+            height: 700,
+            autoCenter: true,
+            display: 'double', // Çift sayfa modu
+            acceleration: true,
+            duration: 1000, // Çevrilme süresi
+            elevation: 50
+        });
+
+        // 2. KLAVYE KONTROLÜ (Sağ/Sol Ok Tuşları)
+        $(document).keydown(function(e){
+            if (e.keyCode == 37) // Sol Ok
+                book.turn("previous");
+            else if (e.keyCode == 39) // Sağ Ok
+                book.turn("next");
+        });
+
+        // 3. AKILLI TIKLAMA SİSTEMİ (Mouse ile)
+        $("#flipbook").bind("click", function(event) {
+            // Tıkladığın yerin koordinatını al
+            var offset = $(this).offset();
+            var relativeX = event.pageX - offset.left;
+            var width = $(this).width();
+
+            // Eğer sağ yarıya tıkladıysan İLERİ
+            if (relativeX > width / 2) {
+                book.turn("next");
+            }
+            // Eğer sol yarıya tıkladıysan GERİ
+            else {
+                book.turn("previous");
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>
