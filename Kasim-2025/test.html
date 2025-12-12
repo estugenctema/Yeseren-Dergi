@@ -1,0 +1,63 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Sayfası</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+
+    <style>
+        body {
+            background: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #flipbook {
+            width: 800px;
+            height: 500px;
+        }
+
+        /* Sayfaların stili (Resim yok, renk var) */
+        .page {
+            font-size: 30px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            line-height: 500px; /* Yazıyı ortala */
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="flipbook">
+        <div class="page" style="background: red;">KAPAK (Tıkla)</div>
+        <div class="page" style="background: blue;">Sayfa 2</div>
+        <div class="page" style="background: green;">Sayfa 3</div>
+        <div class="page" style="background: orange;">Sayfa 4</div>
+        <div class="page" style="background: purple;">Sayfa 5</div>
+        <div class="page" style="background: teal;">ARKA KAPAK</div>
+    </div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        // Kitabı başlat
+        var book = $("#flipbook").turn({
+            width: 800,
+            height: 500,
+            autoCenter: true
+        });
+
+        // EKRANA TIKLAYINCA ÇEVİR (Sürüklemeyle uğraşma)
+        $("#flipbook").click(function(e) {
+            book.turn("next");
+        });
+    });
+    </script>
+
+</body>
+</html>
