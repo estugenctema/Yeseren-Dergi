@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
+        /* TEMEL AYARLAR */
         * {
             -webkit-user-select: none; user-select: none;
             -webkit-user-drag: none; user-drag: none;
@@ -20,24 +21,25 @@
         }
 
         body {
-            /* Heyzine tarzı sahne ışığı arka planı */
-            background: radial-gradient(circle at center, #ffffff 0%, #e0e0e0 100%);
+            /* Heyzine tarzı sahne ışığı */
+            background: radial-gradient(circle at center, #ffffff 0%, #e6e6e6 100%);
             height: 100vh;
             display: flex;
-            flex-direction: column; /* Alt alta dizilim (Kitap üstte, çubuk altta) */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: hidden;
             font-family: sans-serif;
         }
 
-        /* KİTAP BOYUTUNU KÜÇÜLTTÜM (Ekrana sığması için) */
+        /* KİTAP ÇERÇEVESİ */
         #flipbook {
-            width: 800px;  /* Eskiden 1000px idi */
-            height: 560px; /* Eskiden 700px idi */
+            width: 800px;
+            height: 560px;
+            /* Kitap gölgesi (Havada durma efekti) */
             box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
             transition: margin-left 0.5s;
-            margin-bottom: 20px; /* Çubukla arasında boşluk */
+            margin-bottom: 25px; /* Çubukla mesafe */
         }
 
         #flipbook .page {
@@ -45,54 +47,73 @@
             cursor: pointer;
         }
 
-        #flipbook .page-wrapper {
-            -webkit-box-shadow: inset 0px 0px 20px rgba(0,0,0,0.1);
-            -moz-box-shadow: inset 0px 0px 20px rgba(0,0,0,0.1);
-            box-shadow: inset 0px 0px 20px rgba(0,0,0,0.1);
+        img { width: 100%; height: 100%; pointer-events: none; }
+
+        /* --- İŞTE SİHİRLİ DOKUNUŞ BURASI (ORTA CİLT GÖLGESİ) --- */
+        
+        /* Tüm sayfaların üzerine hayali bir katman (overlay) ekliyoruz */
+        #flipbook .page::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            z-index: 10; /* Resmin üzerinde durur */
+            pointer-events: none; /* Tıklamayı engellemez */
         }
 
-        img { width: 100%; height: 100%; pointer-events: none; }
+        /* SOL SAYFALAR (Çift Numaralar): Gölge SAĞ tarafta (Orta kısım) */
+        #flipbook .even::after {
+            /* Sağ kenara doğru koyulaşan degrade */
+            background: linear-gradient(to right, rgba(0,0,0,0) 92%, rgba(0,0,0,0.15) 100%);
+            border-right: 1px solid rgba(0,0,0,0.1); /* Cilt çizgisi */
+        }
+
+        /* SAĞ SAYFALAR (Tek Numaralar): Gölge SOL tarafta (Orta kısım) */
+        #flipbook .odd::after {
+            /* Sol kenara doğru koyulaşan degrade */
+            background: linear-gradient(to left, rgba(0,0,0,0) 92%, rgba(0,0,0,0.15) 100%);
+            border-left: 1px solid rgba(0,0,0,0.1); /* Cilt çizgisi */
+        }
+
+        /* KAPAK İSTİSNASI (Kapakta cilt gölgesi olmasın istersen burayı açabilirsin) */
+        /* #flipbook .p1::after { background: none; border: none; } */
+
 
         /* --- İLERLEME ÇUBUĞU TASARIMI --- */
         .slider-container {
-            width: 600px; /* Çubuğun genişliği */
-            background: rgba(0,0,0,0.05);
-            padding: 10px 20px;
-            border-radius: 30px;
+            width: 500px;
+            background: rgba(0,0,0,0.05); /* Çok hafif gri zemin */
+            padding: 10px 25px;
+            border-radius: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px); /* Hafif buzlu cam efekti */
         }
 
-        /* Çubuğun kendisi */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
-            height: 6px;
+            height: 5px;
             background: #ccc;
             border-radius: 5px;
             cursor: pointer;
+            outline: none;
         }
 
-        /* Çubuğun yuvarlak tutamacı (Thumb) */
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             border-radius: 50%;
-            background: #333; /* Tutamaç rengi */
-            margin-top: -6px; /* Ortalamak için */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            background: #444;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: background 0.2s;
         }
-
-        /* Firefox için uyumluluk */
-        input[type=range]::-moz-range-thumb {
-            height: 18px;
-            width: 18px;
-            border: none;
-            border-radius: 50%;
-            background: #333;
-            cursor: pointer;
+        
+        input[type=range]::-webkit-slider-thumb:hover {
+            background: #000; /* Üstüne gelince koyulaşsın */
+            transform: scale(1.2); /* Hafif büyüsün */
         }
 
         /* Mobil Uyum */
@@ -153,28 +174,29 @@
             duration: 1000,
             elevation: 50,
             gradients: true,
-            
-            // 1. KİTAP ÇEVRİLİNCE ÇUBUĞU OYNAT
             when: {
                 turning: function(event, page, view) {
                     slider.val(page);
+                },
+                turned: function(event, page, view) {
+                    slider.val(page); // Dönüş bitince de güncelle (Garanti olsun)
                 }
             }
         });
 
-        // 2. ÇUBUK OYNAYINCA KİTABI ÇEVİR
+        // Çubuk değişince kitap dönsün
         slider.on("input change", function() {
             var newPage = $(this).val();
             book.turn("page", newPage);
         });
 
-        // Klavye Kontrolü
+        // Klavye
         $(document).keydown(function(e){
             if (e.keyCode == 37) book.turn("previous");
             if (e.keyCode == 39) book.turn("next");
         });
 
-        // Tıklama Kontrolü
+        // Tıklama
         $("#flipbook").bind("click", function(event) {
             var offset = $(this).offset();
             if ((event.pageX - offset.left) > $(this).width() / 2)
